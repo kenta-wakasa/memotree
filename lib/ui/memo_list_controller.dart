@@ -19,7 +19,6 @@ class MemoListController extends ChangeNotifier {
 
   Offset tapPosition;
   List<MemoEntity> memoEntities = <MemoEntity>[];
-  List<Widget> _memos = [];
   int slectedHash;
 
   List<Widget> get memos {
