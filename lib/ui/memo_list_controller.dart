@@ -9,27 +9,20 @@ final memoListProvider = ChangeNotifierProvider.autoDispose<MemoListController>(
 
 class MemoListController extends ChangeNotifier {
   MemoListController() {
-    /// 初期化処理をここに書く
     memoEntities = [
       MemoEntity(pos: const Offset(100, 50), color: Colors.grey),
       MemoEntity(pos: const Offset(30, 200), color: Colors.grey),
       MemoEntity(pos: const Offset(200, 400), color: Colors.grey),
     ];
-    generateMemos();
     tapPosition = const Offset(0, 0);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Offset tapPosition;
-  List<MemoEntity> memoEntities = [];
-  List<Widget> memos = [];
+  List<MemoEntity> memoEntities = <MemoEntity>[];
+  List<Widget> _memos = [];
   int slectedHash;
 
-  void generateMemos() {
+  List<Widget> get memos {
     final _memos = <Widget>[];
     for (final memoEntity in memoEntities) {
       _memos.add(movableBox(memoEntity));
@@ -40,12 +33,11 @@ class MemoListController extends ChangeNotifier {
         onPanUpdate: (details) {
           tapPosition = details.localPosition;
           changePos(tapPosition);
-          generateMemos();
+          notifyListeners();
         },
       ),
     );
-    memos = _memos;
-    notifyListeners();
+    return _memos;
   }
 
   Widget movableBox(MemoEntity memoEntity) {
@@ -60,29 +52,27 @@ class MemoListController extends ChangeNotifier {
           dragStartBehavior: DragStartBehavior.down,
           onTapDown: (details) {
             slectedHash = memoEntity.hashCode;
-            changeColor(slectedHash);
-            generateMemos();
+            changeColor(memoEntity);
+            notifyListeners();
           },
         ),
       ),
     );
   }
 
-  void changeColor(int hashCode) {
-    for (final memoEntity in memoEntities) {
-      if (memoEntity.hashCode == hashCode) {
-        memoEntity.color = Colors.yellow;
+  void changeColor(MemoEntity memoEntity) {
+    for (final _memoEntity in memoEntities) {
+      if (_memoEntity == memoEntity) {
+        _memoEntity.color = Colors.yellow;
       } else {
-        memoEntity.color = Colors.grey;
+        _memoEntity.color = Colors.grey;
       }
     }
   }
 
   void changePos(Offset pos) {
-    for (final memoEntity in memoEntities) {
-      if (memoEntity.hashCode == slectedHash) {
-        memoEntity.pos = pos;
-      }
+    if (slectedHash != null) {
+      memoEntities.firstWhere((e) => e.hashCode == slectedHash).pos = pos;
     }
   }
 }

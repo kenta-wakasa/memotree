@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'memo_list_controller.dart';
 
 class MemoListPage extends ConsumerWidget {
-  MemoListPage({Key key}) : super(key: key);
+  const MemoListPage({Key key}) : super(key: key);
   static const String title = 'メモ一覧';
   @override
   Widget build(BuildContext context, ScopedReader watch) {
